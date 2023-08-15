@@ -1,0 +1,92 @@
+<!-- page title -->
+<div class="toolbar" role="banner">
+    <img width="60" alt="B3 Logo" src="../../../assets/images/logotipo.png">
+</div>
+<div class="container-centralizado">
+
+    <div class="row" style="width: 90%;">
+        <h4>
+            Projeto de avaliação para desenvolvedor - Cálculo CDB
+        </h4>
+        <!-- dados para calculo-->
+        <div class="col-3">
+            <ng-container [ngTemplateOutlet]="formDataTemplate">
+            </ng-container>
+        </div>
+        <!-- resultado do calculo -->
+        <div class="col-8">
+            <ng-container [ngTemplateOutlet]="calculateResultTemplate"></ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #formDataTemplate>
+    <div class="card">
+        <div class="card-body"
+            style="height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <form [formGroup]="formData" #addData="ngForm" (ngSubmit)="onSubmit()">
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="initialValue" class="form-label required-label">Valor Inicial R$</label>
+                            <input type="text" appCurrencyMask class="form-control" id="initialValue" formControlName="initialValue"
+                                [ngClass]="{ 'is-invalid': (formData.controls['initialValue'].touched || addData.submitted) && formData.controls['initialValue'].invalid }" />
+                            <div *ngIf="(formData.controls['initialValue'].touched || addData.submitted) && formData.controls['initialValue'].invalid"
+                                class="invalid-feedback">
+                                {{ getErrorMessage('initialValue') }}
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="periodInMonths" class="form-label required-label">Periodo em Meses</label>
+                            <input type="number" class="form-control" id="periodInMonths"
+                                formControlName="periodInMonths"
+                                [ngClass]="{ 'is-invalid': (formData.controls['periodInMonths'].touched || addData.submitted) && formData.controls['periodInMonths'].invalid }" />
+                            <div *ngIf="(formData.controls['periodInMonths'].touched || addData.submitted) && formData.controls['periodInMonths'].invalid"
+                                class="invalid-feedback">
+                                {{ getErrorMessage('periodInMonths') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg waves-effect waves-light"
+                    style="width: 100%; height: 300px;">CALCULAR</button>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #calculateResultTemplate>
+    <div class="card">
+        <div class="card-body"
+            style="height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <p *ngIf="isLoading">Calculo do investimento CDB baseado nos dados informados.</p>
+            <p *ngIf="!isLoading" style="margin-bottom: 20px; font-size: medium; font-weight: 200;">Com o investimento
+                de
+                {{investmentresult.InvestedAmount | currencyBRL}} no CDB durante o período de 12 meses, o
+                valor líquido será de:</p>
+            <h3>{{investmentresult.NetTotal | currencyBRL}}</h3>
+            <div *ngIf="!isLoading" class="row">
+                <ul class="custom-list">
+                    <li class="list-item"><span class="list-title">Valor Investido:</span>
+                        <span>{{investmentresult.InvestedAmount | currencyBRL }}</span>
+                    </li>
+                    <li class="list-item"><span class="list-title">Rendimento:</span> <span>{{investmentresult.Yield
+                            | currencyBRL }}</span></li>
+                    <li class="list-item"><span class="list-title">Total Bruto:</span>
+                        <span>{{investmentresult.GrossTotal | currencyBRL }}</span>
+                    </li>
+                    <li class="list-item"><span class="list-title">Imposto:</span>
+                        <span>{{investmentresult.TaxAmount | currencyBRL }}</span>
+                    </li>
+                    <li class="list-item"><span class="list-title">Total Líquido:</span>
+                        <span>{{investmentresult.NetTotal | currencyBRL }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</ng-template>
