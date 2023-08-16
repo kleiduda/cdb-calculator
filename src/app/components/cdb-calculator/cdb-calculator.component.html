@@ -29,7 +29,9 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="initialValue" class="form-label required-label">Valor Inicial R$</label>
-                            <input type="text" appCurrencyMask class="form-control" id="initialValue" formControlName="initialValue"
+                            <input type="text" currencyMask
+                                [options]="{ prefix: '', align: 'left', thousands: '.', decimal: ',' }"
+                                class="form-control" id="initialValue" formControlName="initialValue"
                                 [ngClass]="{ 'is-invalid': (formData.controls['initialValue'].touched || addData.submitted) && formData.controls['initialValue'].invalid }" />
                             <div *ngIf="(formData.controls['initialValue'].touched || addData.submitted) && formData.controls['initialValue'].invalid"
                                 class="invalid-feedback">
@@ -66,7 +68,7 @@
             <p *ngIf="isLoading">Calculo do investimento CDB baseado nos dados informados.</p>
             <p *ngIf="!isLoading" style="margin-bottom: 20px; font-size: medium; font-weight: 200;">Com o investimento
                 de
-                {{investmentresult.InvestedAmount | currencyBRL}} no CDB durante o período de 12 meses, o
+                {{investmentresult.InvestedAmount | currencyBRL}} no CDB durante o período de {{formData.controls['periodInMonths'].value}} meses, o
                 valor líquido será de:</p>
             <h3>{{investmentresult.NetTotal | currencyBRL}}</h3>
             <div *ngIf="!isLoading" class="row">

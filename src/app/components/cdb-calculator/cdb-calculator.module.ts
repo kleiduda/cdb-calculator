@@ -4,19 +4,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CdbCalculatorComponent } from './cdb-calculator.component';
 import { CdbCalculatorRoutingModule } from './cdb-calculator-routing.module';
 import { CurrencyBRLPipe } from 'src/app/pipe/currency-brl.pipe';
-import { CurrencyMaskDirective } from 'src/app/only-number.directive';
+import { NgxCurrencyDirective } from 'ngx-currency';
 
 @NgModule({
   declarations: [
     CdbCalculatorComponent,
-    CurrencyBRLPipe,
-    CurrencyMaskDirective
+    CurrencyBRLPipe
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CdbCalculatorRoutingModule
+    CdbCalculatorRoutingModule,
+    NgxCurrencyDirective
   ]
 })
 export class CdbCalculatorModule { }

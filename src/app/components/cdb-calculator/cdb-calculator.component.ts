@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { catchError } from 'rxjs';
 import { CdbCalculatorRequest } from 'src/app/model/cdb-calculator-request.model';
 import { InvestmentResult } from 'src/app/model/investment-result.model';
@@ -30,7 +36,7 @@ export class CdbCalculatorComponent {
     //
     this.formData = this.fb.group(
       {
-        initialValue: ['', [Validators.required, Validators.minLength(3)]],
+        initialValue: ['', [Validators.required, this.greaterThanZero]],
         periodInMonths: ['', Validators.required],
       },
       {
@@ -41,37 +47,37 @@ export class CdbCalculatorComponent {
 
   onSubmit() {
     let v = this.formData.value;
-    let valuee = this.convertToApiFormat(v.initialValue);
-    console.log(valuee);
-    
-    // let cdb: CdbCalculatorRequest = CdbCalculatorRequest.create(this.convertToApiFormat(v.initialValue),v.periodInMonths);
+    let cdb: CdbCalculatorRequest = CdbCalculatorRequest.create(
+      v.initialValue,
+      v.periodInMonths
+    );
 
-    // if (this.formData.valid) {
-    //   this.service
-    //     .calculate(cdb)
-    //     .pipe(
-    //       catchError((error: any) => {
-    //         Swal.fire({
-    //           title: 'Erro',
-    //           text: 'Erro na chamada da API',
-    //           icon: 'error',
-    //         });
-    //         throw error;
-    //       })
-    //     )
-    //     .subscribe((ret: ServiceResult<InvestmentResult>) => {
-    //       if (ret.Status) {
-    //         this.investmentresult = ret.Result;
-    //         this.isLoading = false;
-    //       } else {
-    //         Swal.fire({
-    //           title: 'Alerta!',
-    //           text: '',
-    //           icon: 'info',
-    //         });
-    //       }
-    //     });
-    // }
+    if (this.formData.valid) {
+      this.service
+        .calculate(cdb)
+        .pipe(
+          catchError((error: any) => {
+            Swal.fire({
+              title: 'Erro',
+              text: 'Erro na chamada da API',
+              icon: 'error',
+            });
+            throw error;
+          })
+        )
+        .subscribe((ret: ServiceResult<InvestmentResult>) => {
+          if (ret.Status) {
+            this.investmentresult = ret.Result;
+            this.isLoading = false;
+          } else {
+            Swal.fire({
+              title: 'Alerta!',
+              text: ret.Mensagens[0],
+              icon: 'info',
+            });
+          }
+        });
+    }
   }
 
   //additional methods
@@ -87,8 +93,7 @@ export class CdbCalculatorComponent {
     return '';
   }
 
-  convertToApiFormat(value: string): number {
-    const sanitizedValue = value.replace(/\./g, '').replace(',', '.');
-    return parseFloat(sanitizedValue);
+  greaterThanZero(control: AbstractControl): ValidationErrors | null {
+    return control.value > 0 ? null : { notGreaterThanZero: true };
   }
 }
